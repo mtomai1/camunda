@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" camunda:diagramRelationId="c136c3c2-d2e2-4edd-9fa5-2c57514d622a">
+  <bpmn:collaboration id="Collaboration_1vc2glc">
+    <bpmn:participant id="Participant_0h9741v" name="Onboarding" processRef="OnboardingPoc" />
+  </bpmn:collaboration>
+  <bpmn:process id="OnboardingPoc" name="POC Onboarding process" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_0gfz7sg">
+      <bpmn:lane id="Lane_0l7xbco" name="Bundle management">
+        <bpmn:flowNodeRef>StartEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>WAIT_FOR_BUNDLE_CODE</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CheckBundleCode</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0oxzayd" name="Personal Data Management">
+        <bpmn:flowNodeRef>WAIT_FOR_ID_DOC</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1juzpmc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>WAIT_PERSONAL_DATA</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>MANAGE_PERSONAL_DATA</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0zhaowq</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_06f3uz4" name="Card Issuing Management">
+        <bpmn:flowNodeRef>Gateway_0nzcsw4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ISSUE_CARD_EXCEPTION</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>END</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ISSUE_CARD</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent" name="Start">
+      <bpmn:outgoing>Flow_0m28o3x</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="WAIT_FOR_BUNDLE_CODE" name="Wait for Bundle Code">
+      <bpmn:documentation>Questo stato rappresenta l'attesa di un nuovo bundle code da parte dell'utente. Tale stato viene raggiunto soltanto se il primo bundle code inserito non è valido per il sistema</bpmn:documentation>
+      <bpmn:incoming>Flow_0zvc8sp</bpmn:incoming>
+      <bpmn:incoming>Flow_0m28o3x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tcjo52</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="CheckBundleCode" name="Check Budle Code">
+      <bpmn:documentation>Controlla il bundle code inserito confrontandolo con i bundle code previsti</bpmn:documentation>
+      <bpmn:incoming>Flow_0tcjo52</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zvc8sp</bpmn:outgoing>
+      <bpmn:outgoing>Flow_19h2d05</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="WAIT_FOR_ID_DOC" name="Wait For ID Doc">
+      <bpmn:documentation>Questo stato rappresenta l'attesa da parte dell'utente del caricamento dei dati del documenti di identità.  Lo stato è raggiungibile soltanto se si è inserito un bundle code corretto</bpmn:documentation>
+      <bpmn:incoming>Flow_00kad22</bpmn:incoming>
+      <bpmn:incoming>Flow_0f59grj</bpmn:incoming>
+      <bpmn:incoming>Flow_13ajlre</bpmn:incoming>
+      <bpmn:incoming>Flow_19h2d05</bpmn:incoming>
+      <bpmn:outgoing>Flow_11ozupn</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1juzpmc" name="Check ID Doc">
+      <bpmn:documentation>Invia i dati dei documenti ad un servizio esterno per farne controllare la veridicità</bpmn:documentation>
+      <bpmn:incoming>Flow_11ozupn</bpmn:incoming>
+      <bpmn:outgoing>Flow_00kad22</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0f59grj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_06y1vxx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="WAIT_PERSONAL_DATA" name="Wait Personal Data">
+      <bpmn:documentation>Questo stato rappresente l'attesa da parte dell'utente dell'inserimento dei dati personali, come : nome, cogmome età.</bpmn:documentation>
+      <bpmn:incoming>Flow_06y1vxx</bpmn:incoming>
+      <bpmn:incoming>Flow_03ja1ml</bpmn:incoming>
+      <bpmn:outgoing>Flow_03l3nfa</bpmn:outgoing>
+      <bpmn:outgoing>Flow_13ajlre</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="MANAGE_PERSONAL_DATA" name="Manage Personal Data" camunda:class="it.reply.poc.onboarding.delegate.ManagePersonalDataDelegate">
+      <bpmn:documentation>Gestisce i dati personali inseriti dall'utente salvandoli su un DB</bpmn:documentation>
+      <bpmn:incoming>Flow_03l3nfa</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xzfqse</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0zhaowq" name="Check Personal Data">
+      <bpmn:documentation>Controlla i personal data</bpmn:documentation>
+      <bpmn:incoming>Flow_0xzfqse</bpmn:incoming>
+      <bpmn:outgoing>Flow_03ja1ml</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0lubr1g</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0nzcsw4" name="Check Issuing">
+      <bpmn:incoming>Flow_10ztlp1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ptmm1v</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0eyu7fn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="ISSUE_CARD_EXCEPTION" name="Issue Card Exception">
+      <bpmn:documentation>L'utente raggiunge questo stato se vi sono errori durante la creazione della carta</bpmn:documentation>
+      <bpmn:incoming>Flow_1ptmm1v</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jqz44l</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="END" name="Onboarded">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${EndListener}" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0eyu7fn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="ISSUE_CARD" name="Issue Card">
+      <bpmn:documentation>Questo stato rappresenta l'attesa da parte dell'utente per l'emissione della carta</bpmn:documentation>
+      <bpmn:incoming>Flow_0jqz44l</bpmn:incoming>
+      <bpmn:incoming>Flow_0lubr1g</bpmn:incoming>
+      <bpmn:outgoing>Flow_10ztlp1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0lubr1g" name="200 OK" sourceRef="Gateway_0zhaowq" targetRef="ISSUE_CARD">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '200_OK'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_19h2d05" name="200 OK" sourceRef="CheckBundleCode" targetRef="WAIT_FOR_ID_DOC">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '200_OK'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0zvc8sp" name="400 Invalid Bundle Code" sourceRef="CheckBundleCode" targetRef="WAIT_FOR_BUNDLE_CODE">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '400_INVALID_BUNDLE_CODE'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0tcjo52" name="/bundle-code" sourceRef="WAIT_FOR_BUNDLE_CODE" targetRef="CheckBundleCode">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${state == 'WAIT_FOR_BUNDLE_CODE'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0m28o3x" name="/start" sourceRef="StartEvent" targetRef="WAIT_FOR_BUNDLE_CODE">
+      <bpmn:documentation>Call the /start API with the locale</bpmn:documentation>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_00kad22" name="400 Generic Error" sourceRef="Gateway_1juzpmc" targetRef="WAIT_FOR_ID_DOC">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '400_GENERIC_ERROR'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0f59grj" name="400 Expired Doc" sourceRef="Gateway_1juzpmc" targetRef="WAIT_FOR_ID_DOC">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '400_EXPIRED_DOC'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_13ajlre" name="/back" sourceRef="WAIT_PERSONAL_DATA" targetRef="WAIT_FOR_ID_DOC">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '200_BACK'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_11ozupn" name="/store-id-doc" sourceRef="WAIT_FOR_ID_DOC" targetRef="Gateway_1juzpmc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${state == 'WAIT_FOR_ID_DOC'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_06y1vxx" name="200 OK" sourceRef="Gateway_1juzpmc" targetRef="WAIT_PERSONAL_DATA">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '200_OK'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_03ja1ml" name="400 Generic Error" sourceRef="Gateway_0zhaowq" targetRef="WAIT_PERSONAL_DATA">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '400_GENERIC_ERROR'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_03l3nfa" name="/store-personal-data" sourceRef="WAIT_PERSONAL_DATA" targetRef="MANAGE_PERSONAL_DATA">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${state == 'WAIT_PERSONAL_DATA'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0xzfqse" sourceRef="MANAGE_PERSONAL_DATA" targetRef="Gateway_0zhaowq" />
+    <bpmn:sequenceFlow id="Flow_0jqz44l" name="/retry" sourceRef="ISSUE_CARD_EXCEPTION" targetRef="ISSUE_CARD">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '200_RETRY'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10ztlp1" name="/issue-card" sourceRef="ISSUE_CARD" targetRef="Gateway_0nzcsw4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${state == 'ISSUE_CARD'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1ptmm1v" name="400 Generic Error" sourceRef="Gateway_0nzcsw4" targetRef="ISSUE_CARD_EXCEPTION">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '400_GENERIC_ERROR'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0eyu7fn" sourceRef="Gateway_0nzcsw4" targetRef="END">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${onb_event == '200_OK'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1vc2glc">
+      <bpmndi:BPMNShape id="Participant_0h9741v_di" bpmnElement="Participant_0h9741v" isHorizontal="true">
+        <dc:Bounds x="161" y="60" width="1430" height="1039" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_06f3uz4_di" bpmnElement="Lane_06f3uz4" isHorizontal="true">
+        <dc:Bounds x="191" y="752" width="1400" height="347" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0oxzayd_di" bpmnElement="Lane_0oxzayd" isHorizontal="true">
+        <dc:Bounds x="191" y="406" width="1400" height="346" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0l7xbco_di" bpmnElement="Lane_0l7xbco" isHorizontal="true">
+        <dc:Bounds x="191" y="60" width="1400" height="346" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0eyu7fn_di" bpmnElement="Flow_0eyu7fn">
+        <di:waypoint x="1320" y="955" />
+        <di:waypoint x="1320" y="1042" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ptmm1v_di" bpmnElement="Flow_1ptmm1v">
+        <di:waypoint x="1345" y="930" />
+        <di:waypoint x="1470" y="930" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1363" y="912" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10ztlp1_di" bpmnElement="Flow_10ztlp1">
+        <di:waypoint x="1320" y="850" />
+        <di:waypoint x="1320" y="905" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1333" y="865" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jqz44l_di" bpmnElement="Flow_0jqz44l">
+        <di:waypoint x="1520" y="890" />
+        <di:waypoint x="1520" y="810" />
+        <di:waypoint x="1370" y="810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1457" y="783" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xzfqse_di" bpmnElement="Flow_0xzfqse">
+        <di:waypoint x="1250" y="550" />
+        <di:waypoint x="1295" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03l3nfa_di" bpmnElement="Flow_03l3nfa">
+        <di:waypoint x="1030" y="550" />
+        <di:waypoint x="1150" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1051" y="516" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03ja1ml_di" bpmnElement="Flow_03ja1ml">
+        <di:waypoint x="1320" y="525" />
+        <di:waypoint x="1320" y="440" />
+        <di:waypoint x="980" y="440" />
+        <di:waypoint x="980" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1106" y="422" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06y1vxx_di" bpmnElement="Flow_06y1vxx">
+        <di:waypoint x="845" y="550" />
+        <di:waypoint x="930" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="869" y="532" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11ozupn_di" bpmnElement="Flow_11ozupn">
+        <di:waypoint x="670" y="550" />
+        <di:waypoint x="795" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="695" y="532" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13ajlre_di" bpmnElement="Flow_13ajlre">
+        <di:waypoint x="980" y="590" />
+        <di:waypoint x="980" y="660" />
+        <di:waypoint x="620" y="660" />
+        <di:waypoint x="620" y="590" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="787" y="642" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f59grj_di" bpmnElement="Flow_0f59grj">
+        <di:waypoint x="820" y="525" />
+        <di:waypoint x="820" y="430" />
+        <di:waypoint x="620" y="430" />
+        <di:waypoint x="620" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="681" y="412" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00kad22_di" bpmnElement="Flow_00kad22">
+        <di:waypoint x="810" y="535" />
+        <di:waypoint x="770" y="480" />
+        <di:waypoint x="650" y="480" />
+        <di:waypoint x="650" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="669" y="462" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m28o3x_di" bpmnElement="Flow_0m28o3x">
+        <di:waypoint x="248" y="230" />
+        <di:waypoint x="350" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="287" y="212" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tcjo52_di" bpmnElement="Flow_0tcjo52">
+        <di:waypoint x="450" y="230" />
+        <di:waypoint x="545" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="467" y="212" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zvc8sp_di" bpmnElement="Flow_0zvc8sp">
+        <di:waypoint x="570" y="205" />
+        <di:waypoint x="570" y="120" />
+        <di:waypoint x="400" y="120" />
+        <di:waypoint x="400" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="454" y="85" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19h2d05_di" bpmnElement="Flow_19h2d05">
+        <di:waypoint x="555" y="240" />
+        <di:waypoint x="490" y="280" />
+        <di:waypoint x="490" y="550" />
+        <di:waypoint x="570" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="505" y="534" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lubr1g_di" bpmnElement="Flow_0lubr1g">
+        <di:waypoint x="1320" y="575" />
+        <di:waypoint x="1320" y="770" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1271" y="999" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1iomhuy_di" bpmnElement="StartEvent">
+        <dc:Bounds x="212" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="218" y="255" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mk2z3n_di" bpmnElement="WAIT_FOR_BUNDLE_CODE">
+        <dc:Bounds x="350" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_03gtxhe_di" bpmnElement="CheckBundleCode" isMarkerVisible="true">
+        <dc:Bounds x="545" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="605.5" y="226" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04sfjn2_di" bpmnElement="WAIT_FOR_ID_DOC">
+        <dc:Bounds x="570" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1juzpmc_di" bpmnElement="Gateway_1juzpmc" isMarkerVisible="true">
+        <dc:Bounds x="795" y="525" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="787" y="582" width="69" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15xsbrj_di" bpmnElement="WAIT_PERSONAL_DATA">
+        <dc:Bounds x="930" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x8mjva_di" bpmnElement="MANAGE_PERSONAL_DATA">
+        <dc:Bounds x="1150" y="510" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0zhaowq_di" bpmnElement="Gateway_0zhaowq" isMarkerVisible="true">
+        <dc:Bounds x="1295" y="525" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1354.5" y="536" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0nzcsw4_di" bpmnElement="Gateway_0nzcsw4" isMarkerVisible="true">
+        <dc:Bounds x="1295" y="905" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1215" y="923" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1k26ocp_di" bpmnElement="ISSUE_CARD_EXCEPTION">
+        <dc:Bounds x="1470" y="890" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xe8m03_di" bpmnElement="END">
+        <dc:Bounds x="1302" y="1042" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1293" y="1085" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_191297w_di" bpmnElement="ISSUE_CARD">
+        <dc:Bounds x="1270" y="770" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

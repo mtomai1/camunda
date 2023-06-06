@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 2,
+  "components": [
+    {
+      "text": "<h2> Insert correct bundle code </h2>",
+      "type": "text",
+      "id": "Field_018do6h"
+    },
+    {
+      "label": "Bundle",
+      "type": "textfield",
+      "id": "Field_16mmxq3",
+      "key": "bundle_field",
+      "description": "Bundle inserted from operator",
+      "validate": {
+        "required": false
+      }
+    },
+    {
+      "action": "submit",
+      "label": "Submit",
+      "type": "button",
+      "id": "Field_16cxlmb",
+      "key": "field_0amhzau"
+    }
+  ],
+  "type": "default",
+  "id": "form_bundle"
+}

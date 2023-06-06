@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="bundle_decision_fr" name="Bundle Decision" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <decision id="BUNDLE_DECISION" name="Bundle Decision" camunda:versionTag="1">
+    <informationRequirement id="InformationRequirement_0wqja4a">
+      <requiredInput href="#InputData_000tcyb" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_02cugj2">
+      <input id="Input_1" label="Bundle">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>bundle</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_1mifqoe">
+          <text>"bundle_fr","bundle_it","bundle_eng"</text>
+        </inputValues>
+      </input>
+      <output id="Output_1" label="Output Decision" name="outputDecision" typeRef="string">
+        <outputValues id="UnaryTests_00jnyxc">
+          <text>"ok","error"</text>
+        </outputValues>
+      </output>
+      <rule id="DecisionRule_1ehdio8">
+        <inputEntry id="UnaryTests_0io4r80">
+          <text>"bundle_fr"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0cupbkc">
+          <text>"ok"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0hbvx7u">
+        <inputEntry id="UnaryTests_1ivk2x2">
+          <text>"bundle_it"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0j3qyyh">
+          <text>"ok"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0qaw1yb">
+        <description>Need check</description>
+        <inputEntry id="UnaryTests_1p5uu32">
+          <text>"bundle_eng"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0nk9bcy">
+          <text>"error"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_000tcyb" name="Bundle" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="BUNDLE_DECISION">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_15y7jrr" dmnElementRef="InputData_000tcyb">
+        <dc:Bounds height="45" width="125" x="187" y="337" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_1av8jbr" dmnElementRef="InformationRequirement_0wqja4a">
+        <di:waypoint x="250" y="337" />
+        <di:waypoint x="250" y="200" />
+        <di:waypoint x="250" y="180" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

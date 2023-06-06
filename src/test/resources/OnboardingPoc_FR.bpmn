@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" camunda:diagramRelationId="c136c3c2-d2e2-4edd-9fa5-2c57514d622a">
+  <bpmn:process id="OnboardingPoc_FR" name="POC Onboarding process FR" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_0gfz7sg" />
+    <bpmn:startEvent id="StartEvent" name="Start">
+      <bpmn:outgoing>Flow_0oogtnv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0m28o3x" name="/bundle-code" sourceRef="WAIT_FOR_BUNDLE_CODE_FR" targetRef="DECISION_BUNDLE">
+      <bpmn:documentation>Call the /start API with the locale</bpmn:documentation>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="END" name="Onboarded">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${EndListener}" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0l0ueib</bpmn:incoming>
+      <bpmn:incoming>Flow_10ciyff</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:businessRuleTask id="DECISION_BUNDLE" name="Analyze Bundle Code" camunda:resultVariable="outputDecision" camunda:decisionRef="BUNDLE_DECISION" camunda:mapDecisionResult="singleEntry">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${EndListener}" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m28o3x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tcjo52</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:userTask id="BUNDLE_FROM_USER" name="Bundle Code from user" camunda:formRef="form_bundle" camunda:formRefBinding="deployment" camunda:assignee="demo" camunda:candidateUsers="demo">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${EndListener}" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mk93g8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l0ueib</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0l0ueib" sourceRef="BUNDLE_FROM_USER" targetRef="END" />
+    <bpmn:exclusiveGateway id="CheckBundleCode" name="Check Budle Code">
+      <bpmn:documentation>Controlla il bundle code inserito confrontandolo con i bundle code previsti</bpmn:documentation>
+      <bpmn:incoming>Flow_0tcjo52</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mk93g8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10ciyff</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0mk93g8" sourceRef="CheckBundleCode" targetRef="BUNDLE_FROM_USER">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${outputDecision == "error"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10ciyff" sourceRef="CheckBundleCode" targetRef="END">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${outputDecision == "ok"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0tcjo52" sourceRef="DECISION_BUNDLE" targetRef="CheckBundleCode" />
+    <bpmn:sequenceFlow id="Flow_0oogtnv" name="/start" sourceRef="StartEvent" targetRef="WAIT_FOR_BUNDLE_CODE_FR" />
+    <bpmn:userTask id="WAIT_FOR_BUNDLE_CODE_FR" name="Wait for Bundle Code">
+      <bpmn:documentation>Questo stato rappresenta l'attesa di un nuovo bundle code da parte dell'utente. Tale stato viene raggiunto soltanto se il primo bundle code inserito non è valido per il sistema</bpmn:documentation>
+      <bpmn:incoming>Flow_0oogtnv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m28o3x</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="OnboardingPoc_FR">
+      <bpmndi:BPMNEdge id="Flow_10ciyff_di" bpmnElement="Flow_10ciyff">
+        <di:waypoint x="685" y="120" />
+        <di:waypoint x="822" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tcjo52_di" bpmnElement="Flow_0tcjo52">
+        <di:waypoint x="560" y="120" />
+        <di:waypoint x="635" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="407" y="102" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m28o3x_di" bpmnElement="Flow_0m28o3x">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="460" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="377" y="93" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mk93g8_di" bpmnElement="Flow_0mk93g8">
+        <di:waypoint x="660" y="145" />
+        <di:waypoint x="660" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l0ueib_di" bpmnElement="Flow_0l0ueib">
+        <di:waypoint x="710" y="290" />
+        <di:waypoint x="960" y="290" />
+        <di:waypoint x="960" y="120" />
+        <di:waypoint x="858" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oogtnv_di" bpmnElement="Flow_0oogtnv">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="260" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="213" y="102" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_03gtxhe_di" bpmnElement="CheckBundleCode" isMarkerVisible="true">
+        <dc:Bounds x="635" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="628" y="57.5" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xe8m03_di" bpmnElement="END">
+        <dc:Bounds x="822" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="813" y="145" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u68dz7_di" bpmnElement="BUNDLE_FROM_USER">
+        <dc:Bounds x="610" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17e5rnf_di" bpmnElement="DECISION_BUNDLE">
+        <dc:Bounds x="460" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_038r9ta_di" bpmnElement="WAIT_FOR_BUNDLE_CODE_FR">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1iomhuy_di" bpmnElement="StartEvent">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="78" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
